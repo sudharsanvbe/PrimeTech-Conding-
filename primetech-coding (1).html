@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrimeTech Coding — Learn AI by Building Real-World Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base:#FFFBF3;
+    --bg-soft:#FFF1E3;
+    --bg-panel:#FFFFFF;
+    --border-soft:rgba(34,40,59,0.09);
+    --coral:#FF6B4A;
+    --coral-soft:rgba(255,107,74,0.12);
+    --teal:#17B8A6;
+    --teal-soft:rgba(23,184,166,0.12);
+    --yellow:#FFC145;
+    --yellow-soft:rgba(255,193,69,0.18);
+    --violet:#8B5CF6;
+    --text-primary:#22283B;
+    --text-muted:#5D6478;
+    --text-faint:#9CA3AF;
+    --shadow-soft:0 10px 30px rgba(34,40,59,0.07);
+    --shadow-lift:0 16px 40px rgba(255,107,74,0.18);
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg-base);
+    color:var(--text-primary);
+    font-family:var(--font-body);
+    line-height:1.5;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* soft ambient blobs instead of dark glow */
+  body::before{
+    content:'';
+    position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(600px 420px at 10% -8%, var(--yellow-soft), transparent 60%),
+      radial-gradient(700px 480px at 95% 5%, var(--teal-soft), transparent 55%),
+      radial-gradient(650px 500px at 50% 105%, var(--coral-soft), transparent 60%);
+  }
+
+  section, header, footer{position:relative;z-index:2;}
+
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  button{font-family:inherit;cursor:pointer;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  h1,h2,h3,h4{font-family:var(--font-display);letter-spacing:-0.01em;}
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--teal);
+    display:flex;align-items:center;gap:8px;margin-bottom:14px;font-weight:500;
+  }
+  .eyebrow::before{
+    content:'';width:7px;height:7px;border-radius:50%;
+    background:var(--coral);
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky;top:0;
+    background:rgba(255,251,243,0.85);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border-soft);
+    z-index:100;
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 32px;max-width:1180px;margin:0 auto;
+  }
+  .logo{
+    font-family:var(--font-display);font-weight:700;font-size:19px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo-mark{
+    width:32px;height:32px;border-radius:10px;
+    background:linear-gradient(135deg,var(--coral),var(--yellow));
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;color:#fff;
+  }
+  .nav-links{display:flex;gap:28px;font-size:14.5px;color:var(--text-muted);font-weight:500;}
+  .nav-links a{transition:color .2s;}
+  .nav-links a:hover{color:var(--coral);}
+  .nav-cta{
+    padding:10px 22px;border-radius:30px;
+    background:var(--coral);color:#fff;font-weight:600;font-size:14px;
+    box-shadow:0 8px 20px rgba(255,107,74,0.3);
+    transition:transform .15s;
+  }
+  .nav-cta:hover{transform:translateY(-1px);}
+  .nav-toggle{display:none;background:none;border:none;color:var(--text-primary);font-size:22px;}
+
+  @media(max-width:860px){
+    .nav-links{display:none;}
+    .nav-toggle{display:block;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:76px 0 60px;}
+  .hero-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:44px;}}
+
+  .hero h1{
+    font-size:clamp(34px, 5vw, 54px);line-height:1.1;font-weight:700;margin-bottom:18px;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(100deg,var(--coral),var(--yellow));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{font-size:17px;color:var(--text-muted);max-width:480px;margin-bottom:28px;}
+  .tag-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px;}
+  .tag-pill{
+    font-family:var(--font-mono);font-size:12.5px;padding:7px 14px;border-radius:20px;
+    background:var(--bg-panel);border:1px solid var(--border-soft);color:var(--text-muted);
+    box-shadow:var(--shadow-soft);
+  }
+  .tag-pill:nth-child(3n+1){color:var(--coral);}
+  .tag-pill:nth-child(3n+2){color:var(--teal);}
+  .tag-pill:nth-child(3n+3){color:#B8860B;}
+
+  .cta-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+  .btn-primary{
+    padding:15px 28px;border-radius:14px;border:none;
+    background:linear-gradient(100deg,var(--coral),#ff8a6a);
+    color:#fff;font-weight:600;font-size:15px;
+    box-shadow:var(--shadow-lift);transition:transform .15s;
+  }
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{
+    padding:15px 24px;border-radius:14px;border:1px solid var(--border-soft);
+    color:var(--text-primary);font-size:15px;font-weight:600;background:var(--bg-panel);
+  }
+
+  .stats-strip{display:flex;gap:36px;margin-top:44px;flex-wrap:wrap;}
+  .stat b{
+    font-family:var(--font-display);font-size:26px;display:block;color:var(--text-primary);
+  }
+  .stat span{font-size:12.5px;color:var(--text-faint);}
+
+  /* --- signature roadmap visual --- */
+  .roadmap-visual{
+    background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:24px;
+    padding:28px 24px 22px;box-shadow:var(--shadow-soft);
+  }
+  .roadmap-visual .rv-title{
+    font-size:13px;color:var(--text-muted);margin-bottom:18px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .roadmap-visual .rv-title b{color:var(--coral);font-weight:700;}
+  svg#roadmapSvg{width:100%;height:auto;display:block;}
+  .rv-node-label{font-family:var(--font-mono);font-size:11px;fill:var(--text-faint);}
+  .rv-node-label.active{fill:var(--text-primary);font-weight:600;}
+
+  /* ---------- SECTION HEADERS ---------- */
+  .sec{padding:84px 0;}
+  .sec.band{background:var(--bg-soft);}
+  .sec-head{max-width:600px;margin-bottom:44px;}
+  .sec-head h2{font-size:clamp(26px,3.4vw,38px);font-weight:700;margin-bottom:14px;}
+  .sec-head p{color:var(--text-muted);font-size:15.5px;}
+
+  /* ---------- PLAYGROUND ---------- */
+  .playground{
+    display:grid;grid-template-columns:270px 1fr;
+    border:1px solid var(--border-soft);border-radius:22px;overflow:hidden;
+    background:var(--bg-panel);box-shadow:var(--shadow-soft);
+  }
+  @media(max-width:760px){.playground{grid-template-columns:1fr;}}
+  .pg-tools{background:var(--bg-soft);padding:10px;}
+  .pg-tool{
+    display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:12px;
+    font-size:14px;color:var(--text-muted);font-weight:500;
+    width:100%;text-align:left;background:none;border:none;transition:background .15s,color .15s;
+  }
+  .pg-tool .dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);flex-shrink:0;}
+  .pg-tool:hover{background:rgba(255,255,255,0.6);color:var(--text-primary);}
+  .pg-tool.active{background:var(--bg-panel);color:var(--coral);box-shadow:var(--shadow-soft);}
+  .pg-tool.active .dot{background:var(--coral);}
+
+  .pg-panel{padding:28px 30px;min-height:320px;display:flex;flex-direction:column;}
+  .pg-panel h4{font-size:16px;margin-bottom:6px;}
+  .pg-panel .pg-desc{color:var(--text-muted);font-size:13.5px;margin-bottom:18px;}
+  .pg-input{
+    background:var(--bg-soft);border:1px solid var(--border-soft);border-radius:12px;
+    padding:12px 14px;font-family:var(--font-mono);font-size:13px;color:var(--text-muted);margin-bottom:14px;
+  }
+  .pg-run{
+    align-self:flex-start;padding:11px 22px;border-radius:10px;
+    background:var(--teal);color:#fff;font-weight:600;font-size:13.5px;border:none;margin-bottom:18px;
+    box-shadow:0 8px 18px rgba(23,184,166,0.28);
+  }
+  .pg-output{
+    background:#1F2430;border:1px solid var(--border-soft);border-radius:12px;
+    padding:16px 18px;font-family:var(--font-mono);font-size:12.8px;color:#8BF0DD;
+    white-space:pre-wrap;min-height:90px;flex-grow:1;
+  }
+
+  /* ---------- PROJECTS ---------- */
+  .proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  @media(max-width:980px){.proj-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.proj-grid{grid-template-columns:1fr;}}
+  .proj-card{
+    background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:18px;
+    padding:22px 20px;box-shadow:var(--shadow-soft);
+    transition:transform .2s,box-shadow .2s;border-top:3px solid var(--coral);
+  }
+  .proj-card:nth-child(4n+2){border-top-color:var(--teal);}
+  .proj-card:nth-child(4n+3){border-top-color:var(--yellow);}
+  .proj-card:nth-child(4n+4){border-top-color:var(--violet);}
+  .proj-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);}
+  .proj-icon{
+    width:40px;height:40px;border-radius:12px;background:var(--bg-soft);
+    display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:16px;
+  }
+  .proj-card h4{font-size:15.5px;margin-bottom:8px;}
+  .proj-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+  .proj-meta span{
+    font-family:var(--font-mono);font-size:10.5px;color:var(--text-faint);
+    border:1px solid var(--border-soft);padding:3px 8px;border-radius:12px;
+  }
+
+  /* ---------- ROADMAP TIMELINE ---------- */
+  .timeline{display:flex;overflow-x:auto;gap:0;padding-bottom:10px;scrollbar-width:thin;}
+  .tl-step{flex:0 0 auto;width:170px;text-align:center;position:relative;padding:0 6px;}
+  .tl-step .tl-dot{
+    width:16px;height:16px;border-radius:50%;background:var(--bg-panel);
+    border:2px solid var(--coral);margin:0 auto 14px;position:relative;z-index:2;
+  }
+  .tl-step.done .tl-dot{background:var(--teal);border-color:var(--teal);}
+  .tl-step::before{content:'';position:absolute;top:7px;left:-50%;width:100%;height:2px;background:var(--border-soft);z-index:1;}
+  .tl-step:first-child::before{display:none;}
+  .tl-step.done::before{background:var(--teal);}
+  .tl-step h5{font-size:13px;margin-bottom:4px;}
+  .tl-step span{font-size:11px;color:var(--text-faint);}
+
+  /* ---------- GAMIFICATION ---------- */
+  .gami{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;}
+  @media(max-width:800px){.gami{grid-template-columns:1fr;}}
+  .leader-card, .xp-card{
+    background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:20px;
+    padding:24px;box-shadow:var(--shadow-soft);
+  }
+  .lb-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);}
+  .lb-row:last-child{border-bottom:none;}
+  .lb-rank{font-family:var(--font-mono);color:var(--text-faint);width:22px;}
+  .lb-rank.gold{color:var(--yellow);font-weight:700;}
+  .lb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--yellow));}
+  .lb-name{flex-grow:1;font-size:14px;font-weight:500;}
+  .lb-xp{font-family:var(--font-mono);font-size:12.5px;color:var(--teal);}
+  .badge-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;}
+  .badge{
+    width:52px;height:52px;border-radius:14px;background:var(--bg-soft);
+    border:1px solid var(--border-soft);display:flex;align-items:center;justify-content:center;font-size:20px;
+  }
+
+  /* ---------- STACK TABLE ---------- */
+  .stack-table{width:100%;border-collapse:collapse;background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-soft);}
+  .stack-table tr{border-bottom:1px solid var(--border-soft);}
+  .stack-table tr:last-child{border-bottom:none;}
+  .stack-table td{padding:15px 20px;font-size:14px;}
+  .stack-table td:first-child{color:var(--teal);font-family:var(--font-mono);font-size:12.5px;width:180px;font-weight:600;}
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;}
+  @media(max-width:900px){.contact-grid{grid-template-columns:1fr;}}
+  .contact-info{
+    background:linear-gradient(135deg,var(--coral),#ff8a6a);
+    border-radius:22px;padding:34px 30px;color:#fff;
+  }
+  .contact-info h3{font-size:22px;margin-bottom:10px;}
+  .contact-info p{font-size:14.5px;color:rgba(255,255,255,0.9);margin-bottom:28px;}
+  .cinfo-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;font-size:14.5px;}
+  .cinfo-icon{
+    width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.18);
+    display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+  }
+  .social-row{display:flex;gap:10px;margin-top:26px;}
+  .social-row a{
+    width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.18);
+    display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .15s;
+  }
+  .social-row a:hover{background:rgba(255,255,255,0.32);}
+
+  .contact-form{
+    background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:22px;
+    padding:32px 30px;box-shadow:var(--shadow-soft);
+  }
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  @media(max-width:500px){.form-row{grid-template-columns:1fr;}}
+  .form-field{display:flex;flex-direction:column;gap:6px;}
+  .form-field label{font-size:12.5px;color:var(--text-muted);font-weight:600;}
+  .form-field input, .form-field select, .form-field textarea{
+    padding:12px 14px;border-radius:10px;border:1px solid var(--border-soft);
+    background:var(--bg-soft);font-family:var(--font-body);font-size:14px;color:var(--text-primary);
+  }
+  .form-field textarea{resize:vertical;min-height:100px;}
+  .form-submit{
+    margin-top:6px;padding:13px 26px;border-radius:12px;border:none;
+    background:var(--teal);color:#fff;font-weight:600;font-size:14.5px;
+    box-shadow:0 8px 20px rgba(23,184,166,0.3);width:100%;
+  }
+  .form-note{font-size:12px;color:var(--text-faint);margin-top:12px;text-align:center;}
+
+  /* ---------- CTA BAND ---------- */
+  .cta-band{
+    margin:0 32px 90px;padding:56px 40px;border-radius:28px;text-align:center;
+    background:linear-gradient(120deg,var(--coral),var(--yellow));color:#fff;
+  }
+  .cta-band h2{font-size:clamp(24px,3.6vw,36px);margin-bottom:16px;}
+  .cta-band p{color:rgba(255,255,255,0.92);margin-bottom:28px;}
+  .cta-band .btn-primary{background:#fff;color:var(--coral);box-shadow:0 10px 26px rgba(0,0,0,0.15);}
+
+  /* ---------- FOOTER ---------- */
+  footer{border-top:1px solid var(--border-soft);padding:56px 0 30px;background:var(--bg-panel);}
+  .foot-grid{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:32px;margin-bottom:40px;}
+  @media(max-width:800px){.foot-grid{grid-template-columns:repeat(2,1fr);}}
+  .foot-col h5{font-size:12.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;}
+  .foot-col a{display:block;font-size:14px;color:var(--text-muted);margin-bottom:10px;}
+  .foot-col a:hover{color:var(--coral);}
+  .foot-bottom{
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    padding-top:24px;border-top:1px solid var(--border-soft);font-size:13px;color:var(--text-faint);
+  }
+
+  /* ---------- WHATSAPP FLOATING BUTTON ---------- */
+  .whatsapp-fab{
+    position:fixed;bottom:26px;right:26px;z-index:200;
+    width:60px;height:60px;border-radius:50%;
+    background:#25D366;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 26px rgba(37,211,102,0.45);
+    animation:wa-pulse 2.4s ease-in-out infinite;
+  }
+  .whatsapp-fab svg{width:30px;height:30px;}
+  .whatsapp-fab:hover{transform:scale(1.06);}
+  @keyframes wa-pulse{
+    0%,100%{box-shadow:0 10px 26px rgba(37,211,102,0.45);}
+    50%{box-shadow:0 10px 26px rgba(37,211,102,0.75), 0 0 0 8px rgba(37,211,102,0.12);}
+  }
+  @media(max-width:600px){
+    .whatsapp-fab{width:52px;height:52px;bottom:18px;right:18px;}
+    .whatsapp-fab svg{width:26px;height:26px;}
+  }
+
+  ::selection{background:var(--coral);color:#fff;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <div class="logo"><div class="logo-mark">P</div>PrimeTech Coding</div>
+    <ul class="nav-links">
+      <li><a href="#playground">AI Playground</a></li>
+      <li><a href="#roadmaps">Roadmaps</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#gamification">Community</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#playground" class="nav-cta">Start Learning Free</a>
+    <button class="nav-toggle">☰</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">From Beginner to AI Automation Developer</div>
+      <h1>Learn AI by <span class="grad">Building Real</span> Projects, Not Watching Slides.</h1>
+      <p class="lead">Prompt engineering, OpenAI &amp; Claude APIs, OCR, RAG, and AI agents — taught through the same Laravel-based projects you'll ship to real clients.</p>
+      <div class="tag-row">
+        <span class="tag-pill">✔ AI Agents</span>
+        <span class="tag-pill">✔ RAG</span>
+        <span class="tag-pill">✔ OpenAI</span>
+        <span class="tag-pill">✔ Laravel AI</span>
+        <span class="tag-pill">✔ OCR</span>
+        <span class="tag-pill">✔ Chatbots</span>
+      </div>
+      <div class="cta-row">
+        <button class="btn-primary" onclick="document.getElementById('playground').scrollIntoView({behavior:'smooth'})">Start Learning Free</button>
+        <a href="#roadmaps" class="btn-ghost">See the roadmap →</a>
+      </div>
+      <div class="stats-strip">
+        <div class="stat"><b>100+</b><span>Students</span></div>
+        <div class="stat"><b>7</b><span>Courses</span></div>
+        <div class="stat"><b>40+</b><span>Projects</span></div>
+        <div class="stat"><b>10+</b><span>Hiring companies</span></div>
+      </div>
+    </div>
+
+    <div class="roadmap-visual">
+      <div class="rv-title"><span>AI Developer Roadmap</span><b id="rvPct">15%</b></div>
+      <svg id="roadmapSvg" viewBox="0 0 340 380"></svg>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="playground">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Try it now — no signup</div>
+      <h2>The AI Playground</h2>
+      <p>Every tool a working AI developer actually uses, right in the browser. Pick one and watch it run.</p>
+    </div>
+    <div class="playground">
+      <div class="pg-tools" id="pgTools"></div>
+      <div class="pg-panel" id="pgPanel"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec band" id="projects">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Learn by shipping</div>
+      <h2>Build things people will actually pay for</h2>
+      <p>Every project ships with source code, a walkthrough video, documentation, an API, and an architecture diagram.</p>
+    </div>
+    <div class="proj-grid" id="projGrid"></div>
+  </div>
+</section>
+
+<section class="sec" id="roadmaps">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">The career path</div>
+      <h2>One track, start to freelance</h2>
+      <p>Scroll to see where you are — and what's next.</p>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+</section>
+
+<section class="sec band" id="gamification">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Stay in it</div>
+      <h2>XP, badges, and a leaderboard that's actually competitive</h2>
+      <p>Quizzes, coding challenges, and projects all feed one score.</p>
+    </div>
+    <div class="gami">
+      <div class="leader-card">
+        <div class="rv-title" style="margin-bottom:14px;"><span>Top Contributors — this week</span></div>
+        <div id="leaderList"></div>
+      </div>
+      <div class="xp-card">
+        <div class="rv-title" style="margin-bottom:6px;"><span>Your badges</span></div>
+        <div class="badge-row" id="badgeRow"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="stack">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Under the hood</div>
+      <h2>Built on the stack you already know</h2>
+      <p>The recommended platform stack for PrimeTech Coding, so it scales like a real product from day one.</p>
+    </div>
+    <table class="stack-table"><tbody id="stackBody"></tbody></table>
+  </div>
+</section>
+
+<section class="sec band" id="contact">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Get in touch</div>
+      <h2>For students, clubs, and college placement cells</h2>
+      <p>Questions about workshops, campus partnerships, or getting your class set up — reach out and we'll get back within a day.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Let's talk</h3>
+        <p>Whether you're a student, a faculty coordinator, or a placement officer — we're happy to set up a free intro session for your college.</p>
+        <div class="cinfo-row"><div class="cinfo-icon">📧</div> hello@primetechcoding.com</div>
+        <div class="cinfo-row"><div class="cinfo-icon">📞</div> +91 90000 12345</div>
+        <div class="cinfo-row"><div class="cinfo-icon">📍</div> Chennai, Tamil Nadu, India</div>
+        <div class="social-row">
+          <a href="#" title="WhatsApp">💬</a>
+          <a href="#" title="Instagram">📸</a>
+          <a href="#" title="LinkedIn">💼</a>
+          <a href="#" title="YouTube">▶️</a>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cName">Full name</label>
+            <input type="text" id="cName" placeholder="Your name">
+          </div>
+          <div class="form-field">
+            <label for="cEmail">Email</label>
+            <input type="email" id="cEmail" placeholder="you@college.edu">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cCollege">College / Company</label>
+            <input type="text" id="cCollege" placeholder="Optional">
+          </div>
+          <div class="form-field">
+            <label for="cReason">I'm reaching out as a</label>
+            <select id="cReason">
+              <option>Student</option>
+              <option>Faculty / Staff</option>
+              <option>Placement Cell</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field" style="margin-bottom:18px;">
+          <label for="cMsg">Message</label>
+          <textarea id="cMsg" placeholder="Tell us what you'd like to set up..."></textarea>
+        </div>
+        <button class="form-submit" id="contactSubmit">Send message</button>
+        <p class="form-note">We usually reply within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <h2>Your first AI project is 20 minutes away.</h2>
+  <p>Free tier includes the playground, one full course, and your first certificate.</p>
+  <button class="btn-primary" onclick="document.getElementById('playground').scrollIntoView({behavior:'smooth'})">Start Learning Free</button>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div class="logo" style="margin-bottom:14px;"><div class="logo-mark">P</div>PrimeTech Coding</div>
+        <p style="color:var(--text-muted);font-size:13.5px;max-width:220px;">Learn AI from scratch, through the projects you'll actually build for clients.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Learn</h5>
+        <a href="#roadmaps">Roadmaps</a>
+        <a href="#playground">AI Playground</a>
+        <a href="#projects">Projects</a>
+        <a href="#">Courses</a>
+      </div>
+      <div class="foot-col">
+        <h5>Grow</h5>
+        <a href="#">Internships</a>
+        <a href="#">Freelance Hub</a>
+        <a href="#">Job Portal</a>
+        <a href="#">Events</a>
+      </div>
+      <div class="foot-col">
+        <h5>Resources</h5>
+        <a href="#">Blog</a>
+        <a href="#">Prompt Library</a>
+        <a href="#">Resource Library</a>
+        <a href="#">AI Tools Directory</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="#">About</a>
+        <a href="#">Community</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 PrimeTech Coding. All rights reserved.</span>
+      <span>Made for builders, not spectators.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp floating button -->
+<a class="whatsapp-fab" href="https://wa.me/919000012345?text=Hi%20PrimeTech%20Coding%2C%20I%27d%20like%20to%20know%20more!" target="_blank" rel="noopener" title="Chat with us on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0012.04 2m0 1.8c2.16 0 4.19.84 5.72 2.37a8.06 8.06 0 012.37 5.74c0 4.47-3.64 8.11-8.11 8.11-1.44 0-2.86-.38-4.1-1.1l-.29-.17-3.11.82.83-3.03-.19-.31a8.07 8.07 0 01-1.24-4.32c0-4.47 3.64-8.11 8.12-8.11m-4.6 4.63c-.16 0-.42.06-.64.31s-.85.83-.85 2.02.87 2.35.99 2.51c.12.16 1.7 2.6 4.13 3.64 2.03.87 2.44.7 2.88.65.44-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28s-1.42-.7-1.64-.78-.38-.12-.54.12-.62.78-.76.94-.28.18-.52.06a6.63 6.63 0 01-1.95-1.2 7.3 7.3 0 01-1.35-1.68c-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.32-.75-1.8-.2-.47-.4-.4-.55-.41z"/></svg>
+</a>
+
+<script>
+/* ---------------- Roadmap SVG (signature element) ---------------- */
+const rmSteps = [
+  {label:"Prompt Engineering", pct:15},
+  {label:"OpenAI API", pct:35},
+  {label:"OCR", pct:50},
+  {label:"RAG", pct:70},
+  {label:"AI Agents", pct:85},
+  {label:"Deployment", pct:95},
+  {label:"Freelancing", pct:100},
+];
+const svg = document.getElementById('roadmapSvg');
+const svgNS = "http://www.w3.org/2000/svg";
+const startX = 40, startY = 20, stepY = 50, curve = 55;
+let pathD = `M ${startX} ${startY}`;
+const nodePositions = [];
+rmSteps.forEach((s,i)=>{
+  const x = i % 2 === 0 ? startX : startX + curve;
+  const y = startY + i*stepY;
+  nodePositions.push({x,y,...s});
+  if(i>0){
+    const prev = nodePositions[i-1];
+    const midY = (prev.y+y)/2;
+    pathD += ` C ${prev.x} ${midY}, ${x} ${midY}, ${x} ${y}`;
+  }
+});
+
+const path = document.createElementNS(svgNS,'path');
+path.setAttribute('d', pathD);
+path.setAttribute('fill','none');
+path.setAttribute('stroke','url(#grad)');
+path.setAttribute('stroke-width','3');
+path.setAttribute('stroke-linecap','round');
+
+const defs = document.createElementNS(svgNS,'defs');
+defs.innerHTML = `<linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0%" stop-color="#FF6B4A"/>
+  <stop offset="100%" stop-color="#17B8A6"/>
+</linearGradient>`;
+svg.appendChild(defs);
+svg.appendChild(path);
+
+nodePositions.forEach((n,i)=>{
+  const g = document.createElementNS(svgNS,'g');
+  const circle = document.createElementNS(svgNS,'circle');
+  circle.setAttribute('cx', n.x);
+  circle.setAttribute('cy', n.y);
+  circle.setAttribute('r', i===2 ? 7.5 : 5.5);
+  circle.setAttribute('fill', i<=2 ? '#17B8A6' : '#FFFFFF');
+  circle.setAttribute('stroke', i<=2 ? '#17B8A6' : '#D8DCE6');
+  circle.setAttribute('stroke-width','2.5');
+  g.appendChild(circle);
+
+  const label = document.createElementNS(svgNS,'text');
+  label.setAttribute('x', n.x + (n.x===startX ? 16 : -16));
+  label.setAttribute('y', n.y+4);
+  label.setAttribute('text-anchor', n.x===startX ? 'start' : 'end');
+  label.setAttribute('class', 'rv-node-label' + (i<=2 ? ' active' : ''));
+  label.textContent = n.label;
+  g.appendChild(label);
+  svg.appendChild(g);
+});
+svg.setAttribute('viewBox', `0 0 340 ${startY + (rmSteps.length-1)*stepY + 30}`);
+
+const totalLength = path.getTotalLength();
+path.style.strokeDasharray = totalLength;
+path.style.strokeDashoffset = totalLength;
+requestAnimationFrame(()=>{
+  path.style.transition = 'stroke-dashoffset 1.6s ease-out';
+  path.style.strokeDashoffset = totalLength * 0.7;
+});
+
+/* ---------------- AI Playground ---------------- */
+const tools = [
+  {name:"Chat with AI", icon:"💬", desc:"Ask anything about your code or your course.", input:"Explain what RAG means in one paragraph.",
+   output:"RAG (Retrieval-Augmented Generation) lets a model pull real facts from your own documents before answering, instead of relying only on what it memorized during training. You embed your docs into a vector store, retrieve the most relevant chunks for a question, and feed those chunks to the model as context — so answers stay accurate and up to date."},
+  {name:"Generate Email", icon:"✉️", desc:"Turn a rough idea into a polished email.", input:"Write a follow-up email to a client about a delayed invoice.",
+   output:"Subject: Quick update on Invoice #4021\n\nHi Priya,\n\nJust checking in — Invoice #4021 was due last week and I wanted to flag it before it slips further. Could you confirm when payment is expected?\n\nHappy to resend the PDF or adjust the schedule if needed.\n\nThanks,\nArun"},
+  {name:"Summarize PDF", icon:"📄", desc:"Drop in a PDF, get the 5 key points.", input:"[uploaded: Q2_Marketing_Report.pdf — 14 pages]",
+   output:"1. Organic traffic grew 22% QoQ, driven mainly by blog content.\n2. Paid CAC rose 9%, mostly from Instagram ad costs.\n3. Email open rate improved after subject-line A/B testing.\n4. Two campaigns underperformed and are recommended for pause.\n5. Q3 plan proposes a 15% budget shift toward organic content."},
+  {name:"OCR Image", icon:"🔍", desc:"Pull clean text out of any scanned image.", input:"[uploaded: invoice_scan_0091.jpg]",
+   output:"INVOICE #0091\nDate: 12 Jul 2026\nBill To: Kavin Traders\nItem: Web Hosting — Annual Plan\nAmount: ₹8,400.00\nStatus: Paid"},
+  {name:"Generate SQL", icon:"🗄️", desc:"Describe the data you need in plain English.", input:"Get the top 5 customers by total order value this year.",
+   output:"SELECT c.name, SUM(o.total) AS total_spent\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nWHERE YEAR(o.created_at) = YEAR(CURDATE())\nGROUP BY c.id\nORDER BY total_spent DESC\nLIMIT 5;"},
+  {name:"Explain Code", icon:"🧠", desc:"Paste code, get a plain-English walkthrough.", input:"array_filter($users, fn($u) => $u->active);",
+   output:"This filters the $users array down to only the entries where the active property is true, using an arrow function as the filter callback. The keys from the original array are preserved, so you'd typically chain array_values() afterward if you need a clean re-indexed list."},
+  {name:"Generate Laravel Code", icon:"⚙️", desc:"Scaffold a controller, model, or route in seconds.", input:"A Laravel controller method to return a paginated list of products as JSON.",
+   output:"public function index(Request $request)\n{\n    return response()->json(\n        Product::query()\n            ->latest()\n            ->paginate($request->get('per_page', 15))\n    );\n}"},
+];
+
+const pgTools = document.getElementById('pgTools');
+const pgPanel = document.getElementById('pgPanel');
+let activeToolIdx = 0;
+
+function renderToolList(){
+  pgTools.innerHTML = tools.map((t,i)=>`
+    <button class="pg-tool ${i===activeToolIdx?'active':''}" data-idx="${i}">
+      <span class="dot"></span>${t.icon} ${t.name}
+    </button>`).join('');
+  pgTools.querySelectorAll('.pg-tool').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeToolIdx = parseInt(btn.dataset.idx);
+      renderToolList();
+      renderPanel();
+    });
+  });
+}
+
+function renderPanel(){
+  const t = tools[activeToolIdx];
+  pgPanel.innerHTML = `
+    <h4>${t.icon} ${t.name}</h4>
+    <p class="pg-desc">${t.desc}</p>
+    <div class="pg-input">${t.input}</div>
+    <button class="pg-run" id="runBtn">Run</button>
+    <div class="pg-output" id="outputBox"><span style="color:#6B7280">Output will appear here.</span></div>
+  `;
+  document.getElementById('runBtn').addEventListener('click', ()=>runTool(t));
+}
+
+function runTool(t){
+  const box = document.getElementById('outputBox');
+  box.textContent = '';
+  let i = 0;
+  const full = t.output;
+  const interval = setInterval(()=>{
+    i += 3;
+    box.textContent = full.slice(0,i);
+    if(i >= full.length){ clearInterval(interval); }
+  }, 12);
+}
+
+renderToolList();
+renderPanel();
+
+/* ---------------- Projects ---------------- */
+const projects = [
+  {icon:"🧾", name:"Invoice Reader", tags:["Source Code","Video","API"]},
+  {icon:"🧑‍💼", name:"HR Assistant", tags:["Docs","Architecture","API"]},
+  {icon:"💬", name:"AI Chatbot", tags:["Source Code","Video","Docs"]},
+  {icon:"📚", name:"RAG Chatbot", tags:["Architecture","API","Video"]},
+  {icon:"📋", name:"Resume Analyzer", tags:["Source Code","Docs"]},
+  {icon:"✉️", name:"Email Generator", tags:["API","Video"]},
+  {icon:"📊", name:"AI CRM", tags:["Source Code","Architecture"]},
+  {icon:"📁", name:"Document AI", tags:["Docs","API","Video"]},
+];
+document.getElementById('projGrid').innerHTML = projects.map(p=>`
+  <div class="proj-card">
+    <div class="proj-icon">${p.icon}</div>
+    <h4>${p.name}</h4>
+    <div class="proj-meta">${p.tags.map(tag=>`<span>${tag}</span>`).join('')}</div>
+  </div>
+`).join('');
+
+/* ---------------- Career Timeline ---------------- */
+const careerSteps = ["Beginner","Prompt Engineering","OpenAI API","OCR","RAG","AI Agents","Deployment","Freelancer","AI Engineer"];
+document.getElementById('timeline').innerHTML = careerSteps.map((s,i)=>`
+  <div class="tl-step ${i<=2?'done':''}">
+    <div class="tl-dot"></div>
+    <h5>${s}</h5>
+    <span>${i<=2 ? 'Complete' : 'Locked'}</span>
+  </div>
+`).join('');
+
+/* ---------------- Leaderboard + Badges ---------------- */
+const leaders = [
+  {rank:1, name:"Sudharsan V.", xp:"4,820 XP", gold:true},
+  {rank:2, name:"Meena R.", xp:"4,510 XP"},
+  {rank:3, name:"Arjun K.", xp:"4,205 XP"},
+  {rank:4, name:"Divya S.", xp:"3,990 XP"},
+];
+document.getElementById('leaderList').innerHTML = leaders.map(l=>`
+  <div class="lb-row">
+    <span class="lb-rank ${l.gold?'gold':''}">#${l.rank}</span>
+    <div class="lb-avatar"></div>
+    <span class="lb-name">${l.name}</span>
+    <span class="lb-xp">${l.xp}</span>
+  </div>
+`).join('');
+
+const badges = ["🏆","🔥","🧩","🎯","⭐","🛠️"];
+document.getElementById('badgeRow').innerHTML = badges.map(b=>`<div class="badge">${b}</div>`).join('');
+
+/* ---------------- Stack Table ---------------- */
+const stack = [
+  ["Backend","Laravel 12"],
+  ["Frontend","React or Vue + Tailwind CSS"],
+  ["Database","MySQL / MariaDB"],
+  ["Authentication","Laravel Breeze or Jetstream"],
+  ["Storage","AWS S3 or Cloudflare R2"],
+  ["Video Hosting","Vimeo or YouTube (private/unlisted)"],
+  ["Payments","Razorpay & Stripe"],
+  ["AI","OpenAI, Groq, Claude APIs"],
+  ["OCR","OCR.space"],
+  ["RAG","pgvector or Pinecone"],
+  ["Search","Meilisearch or Algolia"],
+  ["Notifications","Laravel Notifications + WhatsApp + Email"],
+  ["Deployment","Docker + Nginx + DigitalOcean/AWS"],
+];
+document.getElementById('stackBody').innerHTML = stack.map(row=>`
+  <tr><td>${row[0]}</td><td>${row[1]}</td></tr>
+`).join('');
+
+/* ---------------- Contact form (client-side demo only) ---------------- */
+document.getElementById('contactSubmit').addEventListener('click', ()=>{
+  const name = document.getElementById('cName').value.trim();
+  const btn = document.getElementById('contactSubmit');
+  if(!name){
+    btn.textContent = 'Please enter your name';
+    btn.style.background = '#E5484D';
+    setTimeout(()=>{ btn.textContent='Send message'; btn.style.background='var(--teal)'; }, 1800);
+    return;
+  }
+  btn.textContent = 'Message sent ✓';
+  btn.style.background = '#17B8A6';
+  setTimeout(()=>{ btn.textContent = 'Send message'; }, 2200);
+});
+</script>
+</body>
+</html>
